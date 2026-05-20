@@ -1,0 +1,15 @@
+venv/
+__pycache__/
+*.pyc
+*.pyo
+.env
+models/*.pkl
+data/
+logs/
+mlruns/
+.DS_Store
+*.egg-info/
+dist/
+build/
+.idea/
+.vscode/
