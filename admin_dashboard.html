@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard | Churn Prediction</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Space Grotesk', sans-serif; background: #f1f3f9; color: #1e293b; font-size: 13px; min-height: 100vh; }
+
+.fd { display: grid; grid-template-columns: 165px 1fr 205px; gap: 0; background: #f1f3f9; min-height: 100vh; }
+
+/* Sidebar */
+.sb { background: white; border-right: 1px solid #e2e8f0; padding: 16px 12px; display: flex; flex-direction: column; position: fixed; top: 0; left: 0; bottom: 0; width: 165px; overflow-y: auto; }
+.sb-user { padding-bottom: 14px; border-bottom: 1px solid #e2e8f0; margin-bottom: 14px; }
+.sb-avatar { width: 38px; height: 38px; border-radius: 50%; background: #7F77DD; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 600; color: white; margin-bottom: 8px; }
+.sb-role { font-size: 10px; background: #EEEDFE; color: #534AB7; border-radius: 100px; padding: 2px 8px; display: inline-block; margin-bottom: 4px; font-weight: 600; }
+.sb-name { font-size: 15px; font-weight: 600; color: #1e293b; }
+.sb-date { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+.sb-nav { display: flex; flex-direction: column; gap: 2px; flex: 1; }
+.nav-item { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; font-size: 12px; color: #64748b; cursor: pointer; transition: all 0.15s; text-decoration: none; }
+.nav-item.active { background: #EEEDFE; color: #534AB7; font-weight: 600; }
+.nav-item:hover { background: #f8fafc; color: #1e293b; }
+.nav-item i { font-size: 15px; }
+.nav-badge { margin-left: auto; background: #E24B4A; color: white; border-radius: 100px; font-size: 9px; padding: 1px 5px; font-weight: 600; }
+.sb-bottom { margin-top: auto; padding-top: 10px; border-top: 1px solid #e2e8f0; }
+.logout-btn { display: flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; font-size: 12px; color: #A32D2D; cursor: pointer; width: 100%; border: none; background: none; font-family: inherit; }
+.logout-btn:hover { background: #FCEBEB; }
+
+/* Main */
+.main { grid-column: 2; margin-left: 165px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; margin-right: 205px; }
+
+/* Right col */
+.right-col { background: white; border-left: 1px solid #e2e8f0; padding: 14px; display: flex; flex-direction: column; gap: 12px; position: fixed; top: 0; right: 0; bottom: 0; width: 205px; overflow-y: auto; }
+
+/* Topbar */
+.topbar { display: flex; align-items: center; gap: 10px; background: white; border-radius: 10px; padding: 10px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); }
+.topbar-title { font-size: 14px; font-weight: 600; color: #1e293b; white-space: nowrap; }
+.search { flex: 1; display: flex; align-items: center; gap: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 6px 10px; font-size: 11px; color: #94a3b8; }
+.notif-wrap { position: relative; cursor: pointer; }
+.notif-dot { position: absolute; top: -2px; right: -2px; width: 8px; height: 8px; border-radius: 50%; background: #E24B4A; border: 1.5px solid white; }
+
+/* Alert bar */
+.alert-bar { display: flex; align-items: center; gap: 8px; padding: 10px 14px; background: #FCEBEB; border: 1px solid #F09595; border-radius: 10px; font-size: 11px; color: #A32D2D; }
+.alert-bar a { margin-left: auto; color: #A32D2D; cursor: pointer; text-decoration: underline; font-size: 11px; }
+
+/* Stats */
+.stats-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+.stat-card { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.stat-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+.stat-icon { width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; }
+.stat-val { font-size: 22px; font-weight: 600; color: #1e293b; line-height: 1; }
+.stat-label { font-size: 11px; color: #64748b; margin-top: 3px; }
+.stat-sub { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+
+/* Table */
+.txn-section { background: white; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); }
+.txn-head { display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px; flex-wrap: wrap; gap: 8px; }
+.txn-title { font-size: 14px; font-weight: 600; color: #1e293b; }
+.txn-actions { display: flex; align-items: center; gap: 7px; }
+.txn-search { display: flex; align-items: center; gap: 5px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 10px; font-size: 11px; color: #94a3b8; }
+.btn-add { display: flex; align-items: center; gap: 5px; padding: 6px 14px; background: #534AB7; color: white; border-radius: 8px; font-size: 11px; font-weight: 600; border: none; cursor: pointer; font-family: inherit; transition: opacity 0.2s; }
+.btn-add:hover { opacity: 0.9; }
+.btn-export { display: flex; align-items: center; gap: 5px; padding: 6px 12px; background: white; color: #64748b; border: 1px solid #e2e8f0; border-radius: 8px; font-size: 11px; font-weight: 500; cursor: pointer; font-family: inherit; }
+.btn-export:hover { background: #f8fafc; }
+.txn-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.txn-table thead tr { background: #f8fafc; }
+.txn-table th { text-align: left; font-weight: 600; color: #64748b; padding: 8px 8px; font-size: 10px; letter-spacing: 0.5px; }
+.txn-table td { padding: 9px 8px; border-top: 1px solid #f1f5f9; color: #1e293b; vertical-align: middle; }
+.txn-table tr:hover td { background: #fafbff; }
+.av { width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: 600; flex-shrink: 0; }
+.name-cell { display: flex; align-items: center; gap: 8px; }
+.name-main { font-weight: 500; font-size: 12px; }
+.name-email { font-size: 10px; color: #94a3b8; }
+.status-ok { background: #E1F5EE; color: #0F6E56; border-radius: 100px; padding: 3px 8px; font-size: 10px; font-weight: 600; }
+.status-med { background: #FAEEDA; color: #854F0B; border-radius: 100px; padding: 3px 8px; font-size: 10px; font-weight: 600; }
+.status-fail { background: #FCEBEB; color: #A32D2D; border-radius: 100px; padding: 3px 8px; font-size: 10px; font-weight: 600; }
+.row-actions { display: flex; align-items: center; gap: 5px; }
+.row-btn { width: 24px; height: 24px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 13px; cursor: pointer; border: none; transition: opacity 0.2s; }
+.row-btn:hover { opacity: 0.75; }
+.row-btn.edit { background: #EEEDFE; color: #534AB7; }
+.row-btn.del { background: #FCEBEB; color: #A32D2D; }
+.pagination { display: flex; align-items: center; justify-content: space-between; margin-top: 12px; font-size: 11px; color: #94a3b8; }
+.pg-btns { display: flex; gap: 6px; }
+.pg-btn { padding: 4px 12px; border: 1px solid #e2e8f0; border-radius: 6px; font-size: 11px; cursor: pointer; background: white; color: #64748b; font-family: inherit; }
+.pg-btn.active { background: #534AB7; color: white; border-color: #534AB7; }
+
+/* Right col */
+.rc-title { font-size: 13px; font-weight: 600; color: #1e293b; }
+.model-widget { background: linear-gradient(135deg, #534AB7, #3730A3); border-radius: 12px; padding: 14px; color: white; position: relative; overflow: hidden; }
+.model-widget::before { content: ''; position: absolute; top: -20px; right: -20px; width: 90px; height: 90px; border-radius: 50%; background: rgba(255,255,255,0.08); }
+.mw-label { font-size: 10px; opacity: 0.8; margin-bottom: 2px; }
+.mw-name { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
+.mw-stat { font-size: 22px; font-weight: 600; }
+.mw-sub { font-size: 10px; opacity: 0.7; margin-top: 2px; margin-bottom: 10px; }
+.mw-btn { background: rgba(255,255,255,0.18); color: white; border: 1px solid rgba(255,255,255,0.25); border-radius: 8px; padding: 6px 0; font-size: 11px; font-weight: 600; cursor: pointer; width: 100%; font-family: inherit; display: flex; align-items: center; justify-content: center; gap: 5px; }
+.mw-btn:hover { background: rgba(255,255,255,0.25); }
+.quick-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 7px; }
+.qa-btn { display: flex; flex-direction: column; align-items: center; gap: 5px; padding: 10px 8px; background: #f8fafc; border-radius: 10px; border: 1px solid #e2e8f0; font-size: 11px; color: #64748b; cursor: pointer; text-align: center; transition: all 0.15s; }
+.qa-btn:hover { background: #EEEDFE; color: #534AB7; border-color: #c4b5fd; }
+.qa-btn i { font-size: 18px; }
+.alert-card { background: #f8fafc; border-radius: 12px; padding: 10px; border: 1px solid #e2e8f0; }
+.alert-item { display: flex; align-items: flex-start; gap: 8px; padding: 7px 0; border-bottom: 1px solid #e2e8f0; }
+.alert-item:last-child { border-bottom: none; padding-bottom: 0; }
+.alert-icon { width: 26px; height: 26px; border-radius: 7px; display: flex; align-items: center; justify-content: center; font-size: 13px; flex-shrink: 0; margin-top: 1px; }
+.alert-text { font-size: 11px; color: #1e293b; line-height: 1.4; font-weight: 500; }
+.alert-time { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+.perf-item { margin-bottom: 8px; }
+.perf-label { display: flex; justify-content: space-between; font-size: 11px; color: #64748b; margin-bottom: 4px; }
+.perf-val { font-weight: 600; color: #1e293b; }
+.prog-bar { height: 6px; border-radius: 4px; background: #e2e8f0; overflow: hidden; }
+.prog-fill { height: 100%; border-radius: 4px; }
+</style>
+</head>
+<body>
+
+<div class="fd">
+
+<!-- Sidebar -->
+<div class="sb">
+  <div class="sb-user">
+    <div class="sb-avatar">OK</div>
+    <div class="sb-role">Admin</div>
+    <div class="sb-name">Omkar</div>
+    <div class="sb-date">Last login: today</div>
+  </div>
+  <div class="sb-nav">
+    <a href="#" class="nav-item active"><i class="ti ti-layout-dashboard"></i>Dashboard</a>
+    <a href="#" class="nav-item"><i class="ti ti-users"></i>Customers</a>
+    <a href="#" class="nav-item"><i class="ti ti-chart-line"></i>Predictions</a>
+    <a href="#" class="nav-item"><i class="ti ti-brain"></i>Models</a>
+    <a href="#" class="nav-item"><i class="ti ti-bell"></i>Alerts <span class="nav-badge">3</span></a>
+    <a href="#" class="nav-item"><i class="ti ti-file-export"></i>Reports</a>
+    <a href="#" class="nav-item"><i class="ti ti-shield"></i>Access</a>
+    <a href="#" class="nav-item"><i class="ti ti-settings"></i>Settings</a>
+  </div>
+  <div class="sb-bottom">
+    <button class="logout-btn"><i class="ti ti-logout" style="font-size:15px"></i>Logout</button>
+  </div>
+</div>
+
+<!-- Main -->
+<div class="main">
+
+  <div class="topbar">
+    <div class="topbar-title">ADMIN DASHBOARD</div>
+    <div class="search"><i class="ti ti-search" style="font-size:13px"></i>Search customers, predictions...</div>
+    <div class="notif-wrap">
+      <i class="ti ti-bell" style="font-size:18px;color:#64748b"></i>
+      <div class="notif-dot"></div>
+    </div>
+    <i class="ti ti-user-circle" style="font-size:20px;color:#64748b;cursor:pointer"></i>
+  </div>
+
+  <div class="alert-bar">
+    <i class="ti ti-alert-triangle" style="font-size:15px;flex-shrink:0"></i>
+    <span><b>3 high-risk customers</b> detected today — immediate action recommended</span>
+    <a>View all</a>
+  </div>
+
+  <div class="stats-row">
+    <div class="stat-card">
+      <div class="stat-head">
+        <div class="stat-icon" style="background:#EEEDFE"><i class="ti ti-users" style="font-size:13px;color:#534AB7"></i></div>
+        <i class="ti ti-arrow-up-right" style="color:#1D9E75;font-size:14px"></i>
+      </div>
+      <div class="stat-val">7,032</div>
+      <div class="stat-label">Total Customers</div>
+      <div class="stat-sub">+124 this week</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-head">
+        <div class="stat-icon" style="background:#FCEBEB"><i class="ti ti-alert-triangle" style="font-size:13px;color:#A32D2D"></i></div>
+        <i class="ti ti-arrow-up-right" style="color:#E24B4A;font-size:14px"></i>
+      </div>
+      <div class="stat-val" style="color:#E24B4A">38</div>
+      <div class="stat-label">High Risk</div>
+      <div class="stat-sub">Needs attention</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-head">
+        <div class="stat-icon" style="background:#E1F5EE"><i class="ti ti-check" style="font-size:13px;color:#1D9E75"></i></div>
+        <i class="ti ti-arrow-up-right" style="color:#1D9E75;font-size:14px"></i>
+      </div>
+      <div class="stat-val" style="color:#1D9E75">0.84</div>
+      <div class="stat-label">Model AUC</div>
+      <div class="stat-sub">XGBoost v1</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-head">
+        <div class="stat-icon" style="background:#FAEEDA"><i class="ti ti-chart-bar" style="font-size:13px;color:#854F0B"></i></div>
+        <i class="ti ti-minus" style="color:#94a3b8;font-size:14px"></i>
+      </div>
+      <div class="stat-val">1,247</div>
+      <div class="stat-label">Total Predictions</div>
+      <div class="stat-sub">Today: 48</div>
+    </div>
+  </div>
+
+  <div class="txn-section">
+    <div class="txn-head">
+      <div class="txn-title">Customer Management</div>
+      <div class="txn-actions">
+        <div class="txn-search"><i class="ti ti-search" style="font-size:11px"></i> Search customer</div>
+        <button class="btn-add"><i class="ti ti-plus" style="font-size:12px"></i>Add Customer</button>
+        <button class="btn-export"><i class="ti ti-download" style="font-size:12px"></i>Export CSV</button>
+        <i class="ti ti-adjustments-horizontal" style="font-size:16px;color:#64748b;cursor:pointer"></i>
+      </div>
+    </div>
+    <table class="txn-table">
+      <thead>
+        <tr>
+          <th style="width:30px"><input type="checkbox"></th>
+          <th>Customer</th>
+          <th>Contract</th>
+          <th>Tenure</th>
+          <th>Risk Level</th>
+          <th>Churn Probability</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><div class="name-cell"><div class="av" style="background:#FCEBEB;color:#A32D2D">RK</div><div><div class="name-main">Rahul Kumar</div><div class="name-email">rahul@email.com</div></div></div></td>
+          <td style="color:#64748b">Month-to-month</td>
+          <td style="color:#64748b">6 months</td>
+          <td><span class="status-fail">🔴 High</span></td>
+          <td style="font-weight:600;color:#E24B4A">72.3%</td>
+          <td><div class="row-actions"><button class="row-btn edit"><i class="ti ti-edit"></i></button><button class="row-btn del"><i class="ti ti-trash"></i></button></div></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><div class="name-cell"><div class="av" style="background:#FAEEDA;color:#854F0B">PS</div><div><div class="name-main">Priya Shah</div><div class="name-email">priya@email.com</div></div></div></td>
+          <td style="color:#64748b">One year</td>
+          <td style="color:#64748b">18 months</td>
+          <td><span class="status-med">🟡 Medium</span></td>
+          <td style="font-weight:600;color:#EF9F27">48.1%</td>
+          <td><div class="row-actions"><button class="row-btn edit"><i class="ti ti-edit"></i></button><button class="row-btn del"><i class="ti ti-trash"></i></button></div></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><div class="name-cell"><div class="av" style="background:#E1F5EE;color:#0F6E56">AJ</div><div><div class="name-main">Amit Joshi</div><div class="name-email">amit@email.com</div></div></div></td>
+          <td style="color:#64748b">Two year</td>
+          <td style="color:#64748b">36 months</td>
+          <td><span class="status-ok">🟢 Low</span></td>
+          <td style="font-weight:600;color:#1D9E75">18.5%</td>
+          <td><div class="row-actions"><button class="row-btn edit"><i class="ti ti-edit"></i></button><button class="row-btn del"><i class="ti ti-trash"></i></button></div></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><div class="name-cell"><div class="av" style="background:#FCEBEB;color:#A32D2D">NP</div><div><div class="name-main">Neha Patil</div><div class="name-email">neha@email.com</div></div></div></td>
+          <td style="color:#64748b">Month-to-month</td>
+          <td style="color:#64748b">3 months</td>
+          <td><span class="status-fail">🔴 High</span></td>
+          <td style="font-weight:600;color:#E24B4A">84.7%</td>
+          <td><div class="row-actions"><button class="row-btn edit"><i class="ti ti-edit"></i></button><button class="row-btn del"><i class="ti ti-trash"></i></button></div></td>
+        </tr>
+        <tr>
+          <td><input type="checkbox"></td>
+          <td><div class="name-cell"><div class="av" style="background:#E6F1FB;color:#185FA5">SK</div><div><div class="name-main">Suresh Kadam</div><div class="name-email">suresh@email.com</div></div></div></td>
+          <td style="color:#64748b">Two year</td>
+          <td style="color:#64748b">48 months</td>
+          <td><span class="status-ok">🟢 Low</span></td>
+          <td style="font-weight:600;color:#1D9E75">12.1%</td>
+          <td><div class="row-actions"><button class="row-btn edit"><i class="ti ti-edit"></i></button><button class="row-btn del"><i class="ti ti-trash"></i></button></div></td>
+        </tr>
+      </tbody>
+    </table>
+    <div class="pagination">
+      <span>Showing 5 of 7,032 customers</span>
+      <div class="pg-btns">
+        <button class="pg-btn">Prev</button>
+        <button class="pg-btn active">1</button>
+        <button class="pg-btn">2</button>
+        <button class="pg-btn">3</button>
+        <button class="pg-btn">Next</button>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Right Column -->
+<div class="right-col">
+  <div class="rc-title">Model Control</div>
+  <div class="model-widget">
+    <div class="mw-label">Active Model</div>
+    <div class="mw-name">XGBoost v1</div>
+    <div class="mw-stat">AUC 0.84</div>
+    <div class="mw-sub">7,032 training samples</div>
+    <button class="mw-btn"><i class="ti ti-refresh" style="font-size:13px"></i> Retrain Model</button>
+  </div>
+
+  <div>
+    <div class="rc-title" style="margin-bottom:8px">Quick Actions</div>
+    <div class="quick-actions">
+      <div class="qa-btn"><i class="ti ti-download" style="color:#534AB7"></i>Export CSV</div>
+      <div class="qa-btn"><i class="ti ti-chart-bar" style="color:#1D9E75"></i>Analytics</div>
+      <div class="qa-btn"><i class="ti ti-user-plus" style="color:#854F0B"></i>Add User</div>
+      <div class="qa-btn"><i class="ti ti-shield" style="color:#A32D2D"></i>Access</div>
+    </div>
+  </div>
+
+  <div class="alert-card">
+    <div class="rc-title" style="margin-bottom:8px">
+      Alerts
+      <span style="background:#E24B4A;color:white;border-radius:100px;font-size:9px;padding:1px 6px;margin-left:4px;font-weight:600">3</span>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon" style="background:#FCEBEB;color:#A32D2D"><i class="ti ti-alert-triangle"></i></div>
+      <div><div class="alert-text">Rahul Kumar — 72% churn risk</div><div class="alert-time">2 min ago</div></div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon" style="background:#FCEBEB;color:#A32D2D"><i class="ti ti-alert-triangle"></i></div>
+      <div><div class="alert-text">Neha Patil — 84% churn risk</div><div class="alert-time">15 min ago</div></div>
+    </div>
+    <div class="alert-item">
+      <div class="alert-icon" style="background:#FAEEDA;color:#854F0B"><i class="ti ti-info-circle"></i></div>
+      <div><div class="alert-text">Drift detected — monitor churn rate</div><div class="alert-time">1 hour ago</div></div>
+    </div>
+  </div>
+
+  <div>
+    <div class="rc-title" style="margin-bottom:8px">Model Performance</div>
+    <div style="background:#f8fafc;border-radius:12px;padding:10px;border:1px solid #e2e8f0">
+      <div class="perf-item">
+        <div class="perf-label"><span>AUC-ROC</span><span class="perf-val">84%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:84%;background:#534AB7"></div></div>
+      </div>
+      <div class="perf-item">
+        <div class="perf-label"><span>Accuracy</span><span class="perf-val">80%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:80%;background:#1D9E75"></div></div>
+      </div>
+      <div class="perf-item" style="margin-bottom:0">
+        <div class="perf-label"><span>F1 Score</span><span class="perf-val">60%</span></div>
+        <div class="prog-bar"><div class="prog-fill" style="width:60%;background:#EF9F27"></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div>
+    <div class="rc-title" style="margin-bottom:8px">Top Churn Reasons</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px">
+      <div style="background:#f8fafc;border-radius:10px;padding:10px;border:1px solid #e2e8f0">
+        <div style="width:28px;height:28px;border-radius:8px;background:#FCEBEB;color:#A32D2D;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:5px"><i class="ti ti-clock"></i></div>
+        <div style="font-size:10px;color:#64748b">Short tenure</div>
+        <div style="font-size:13px;font-weight:600;color:#1e293b">42.3%</div>
+      </div>
+      <div style="background:#f8fafc;border-radius:10px;padding:10px;border:1px solid #e2e8f0">
+        <div style="width:28px;height:28px;border-radius:8px;background:#FAEEDA;color:#854F0B;display:flex;align-items:center;justify-content:center;font-size:14px;margin-bottom:5px"><i class="ti ti-receipt"></i></div>
+        <div style="font-size:10px;color:#64748b">High charges</div>
+        <div style="font-size:13px;font-weight:600;color:#1e293b">31.8%</div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:8px">
+      <button style="font-size:11px;color:#534AB7;border:1px solid #c4b5fd;border-radius:100px;padding:4px 14px;background:white;cursor:pointer;font-family:inherit">See all <i class="ti ti-chevron-down" style="font-size:11px"></i></button>
+    </div>
+  </div>
+</div>
+
+</div>
+</body>
+</html>
