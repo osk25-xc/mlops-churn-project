@@ -1,96 +1,61 @@
-# MLOps Customer Churn Prediction Pipeline
+# Customer Churn Prediction | MLOps Pipeline
 
-A production-ready end-to-end MLOps project using XGBoost, FastAPI, MLflow, Docker, and Streamlit.
+An end-to-end machine-learning engineering project structured around churn prediction, experiment tracking, an API, a lightweight user interface, and operational monitoring.
 
-## Project Structure
+## Objective
+Demonstrate a reproducible workflow for training and serving a churn model, with supporting components for experiment tracking and monitoring.
 
-```
-mlops-churn-project/
-├── app/
-│   ├── main.py          # FastAPI prediction API
-│   └── dashboard.py     # Streamlit UI
-├── src/
-│   ├── eda.py           # Exploratory data analysis
-│   ├── feature_engineering.py
-│   ├── train.py         # Model training + MLflow tracking
-│   └── monitoring.py    # Drift detection & logging
-├── models/              # Saved model artifacts (.pkl)
-├── logs/                # Prediction logs & plots
-├── mlruns/              # MLflow experiment tracking
-├── data/                # Raw dataset (not committed)
-├── tests/
-├── Dockerfile
-├── docker-compose.yml
-├── render.yaml
-└── requirements.txt
-```
+## Architecture & Components
+- **Exploratory analysis:** `src/eda.py`
+- **Feature engineering:** `src/feature_engineering.py`
+- **Model training:** `src/train.py`
+- **Experiment tracking:** MLflow
+- **Prediction API:** FastAPI
+- **Interactive interface:** Streamlit
+- **Containerization:** Docker / Docker Compose
+- **Monitoring:** prediction logs and drift-related checks
+- **Tests:** `tests/`
 
-## Quick Start
+## Technology Stack
+Python · XGBoost · FastAPI · Streamlit · MLflow · Docker
 
-### 1. Setup environment
+## Setup
+Create and activate a virtual environment, then install the repository dependencies:
+
 ```bash
-python -m venv venv
-source venv/bin/activate
+python -m venv .venv
+```
+
+Windows:
+```powershell
+.venv\Scripts\Activate.ps1
 pip install -r requirements.txt
 ```
 
-### 2. Download dataset
-Download **Telco Customer Churn** from Kaggle and place it at:
-`data/WA_Fn-UseC_-Telco-Customer-Churn.csv`
+macOS/Linux:
+```bash
+source .venv/bin/activate
+pip install -r requirements.txt
+```
 
-### 3. Run EDA
+The project instructions reference the Telco Customer Churn dataset. Place the dataset at the path expected by the scripts before running the pipeline.
+
+## Run Components
 ```bash
 python src/eda.py
-```
-
-### 4. Train models (logs to MLflow)
-```bash
 python src/train.py
-```
-
-### 5. View MLflow dashboard
-```bash
 mlflow ui
-# Open http://localhost:5000
-```
-
-### 6. Start FastAPI
-```bash
 uvicorn app.main:app --reload
-# API docs at http://localhost:8000/docs
-```
-
-### 7. Start Streamlit dashboard
-```bash
 streamlit run app/dashboard.py
-# Open http://localhost:8501
 ```
 
-### 8. Run with Docker
-```bash
-docker-compose up --build
-```
+Use the repository's Docker Compose configuration if you prefer a containerized setup. Review the code and configuration before deploying anywhere.
 
-## API Endpoints
+## Important Notes
+This is a portfolio/demo project, not a claim of production deployment or validated business performance. Model quality, security, data handling, and monitoring behavior should be evaluated in the target environment before real-world use.
 
-| Method | Endpoint | Description |
-|--------|----------|-------------|
-| GET | `/` | Root |
-| GET | `/health` | Health check |
-| POST | `/predict` | Predict churn |
-| GET | `/logs/summary` | Prediction summary |
+## Skills Demonstrated
+ML pipeline structure · Feature engineering · Model training · Experiment tracking · API development · Containerization · Monitoring concepts
 
-## Tech Stack
-
-| Component | Technology |
-|-----------|-----------|
-| Language | Python 3.9 |
-| ML | XGBoost, Scikit-learn |
-| Tracking | MLflow |
-| API | FastAPI |
-| Frontend | Streamlit |
-| Container | Docker |
-| Deployment | Render |
-
-## Resume Line
-> Developed a production-ready customer churn prediction system using XGBoost, FastAPI, MLflow, Docker, and Streamlit with end-to-end deployment and monitoring.
+---
+Created by **Omkar S. Kshirsagar** | [GitHub Profile](https://github.com/osk25-xc)
