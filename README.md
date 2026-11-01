@@ -1,32 +1,36 @@
-# Customer Churn Prediction | MLOps Pipeline
+# Customer Churn Prediction | MLOps Portfolio Project
 
-An end-to-end machine-learning engineering project structured around churn prediction, experiment tracking, an API, a lightweight user interface, and operational monitoring.
+An end-to-end portfolio project exploring how a customer-churn model can be developed, served, and monitored. The repository is organized around a reproducible machine-learning workflow and supporting application components.
 
-## Objective
-Demonstrate a reproducible workflow for training and serving a churn model, with supporting components for experiment tracking and monitoring.
+## Project workflow
 
-## Architecture & Components
-- **Exploratory analysis:** `src/eda.py`
-- **Feature engineering:** `src/feature_engineering.py`
-- **Model training:** `src/train.py`
-- **Experiment tracking:** MLflow
-- **Prediction API:** FastAPI
-- **Interactive interface:** Streamlit
-- **Containerization:** Docker / Docker Compose
-- **Monitoring:** prediction logs and drift-related checks
-- **Tests:** `tests/`
+1. Explore the churn dataset and inspect its quality.
+2. Prepare features for model training.
+3. Train and evaluate a classification model.
+4. Track experiments with MLflow.
+5. Expose predictions through a FastAPI application.
+6. Provide an interactive interface with Streamlit.
+7. Package components with Docker and review monitoring-related logs.
 
-## Technology Stack
-Python · XGBoost · FastAPI · Streamlit · MLflow · Docker
+## Technology
+
+Python · Pandas · Scikit-learn / XGBoost (as implemented) · MLflow · FastAPI · Streamlit · Docker
+
+## Repository components
+
+- `src/eda.py` — exploratory analysis
+- `src/feature_engineering.py` — feature preparation
+- `src/train.py` — model training
+- `app/` — API and interface components
+- `tests/` — automated tests
 
 ## Setup
-Create and activate a virtual environment, then install the repository dependencies:
 
 ```bash
 python -m venv .venv
 ```
 
-Windows:
+Windows PowerShell:
 ```powershell
 .venv\Scripts\Activate.ps1
 pip install -r requirements.txt
@@ -38,9 +42,12 @@ source .venv/bin/activate
 pip install -r requirements.txt
 ```
 
-The project instructions reference the Telco Customer Churn dataset. Place the dataset at the path expected by the scripts before running the pipeline.
+Use the dataset path expected by the project scripts. Review configuration and required environment variables before running services.
 
-## Run Components
+## Run
+
+Run only the components available in the current checkout:
+
 ```bash
 python src/eda.py
 python src/train.py
@@ -49,13 +56,14 @@ uvicorn app.main:app --reload
 streamlit run app/dashboard.py
 ```
 
-Use the repository's Docker Compose configuration if you prefer a containerized setup. Review the code and configuration before deploying anywhere.
+If a command or path differs in your local version, follow the actual project structure and configuration.
 
-## Important Notes
-This is a portfolio/demo project, not a claim of production deployment or validated business performance. Model quality, security, data handling, and monitoring behavior should be evaluated in the target environment before real-world use.
+## Evaluation and limitations
 
-## Skills Demonstrated
-ML pipeline structure · Feature engineering · Model training · Experiment tracking · API development · Containerization · Monitoring concepts
+Report model metrics only after running the training and evaluation workflow. This is a portfolio demonstration, not a claim of production deployment. Validate data permissions, model quality, security, and monitoring before any real-world use.
 
----
-Created by **Omkar S. Kshirsagar** | [GitHub Profile](https://github.com/osk25-xc)
+## Skills demonstrated
+
+Machine-learning workflow · Feature engineering · Experiment tracking · API development · Containerization · Model monitoring concepts
+
+Maintained by [Omkar S. Kshirsagar](https://github.com/osk25-xc).
